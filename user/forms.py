@@ -9,3 +9,11 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ['first_name','last_name','username','email','password1','password2']
 
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','username','email', 'bio']
+
+

@@ -2,9 +2,12 @@ from django.shortcuts import render
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from .forms import RegistrationForm
+from django.contrib.auth.decorators import login_required
 
-def register(request):
+from .models import User
+from .forms import RegistrationForm, UserUpdateForm
+
+def userRegister(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -31,3 +34,24 @@ def userLogin(request):
 
 def home(request):
     return render(request, 'user/home.html')
+
+def profile(request, username):
+    try:
+        targetUser = User.objects.get(username=username)
+        context = {'targetUser': targetUser}
+        return render(request, 'user/profile.html', context)
+    except User.DoesNotExist:
+        return render(request, 'user/home.html')
+
+@login_required
+def userEdit(request):
+    print('a')
+    if request.method == 'POST':
+        form =UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', request.user.username)        
+            
+    else: 
+            form = UserUpdateForm(instance=request.user)
+    return render(request, 'user/edit.html', {'form':form})

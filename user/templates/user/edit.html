@@ -1,0 +1,9 @@
+{% extends './base.html' %} {% block title %} Edit | My Social Media App
+{%endblock %} {% block content %}
+<h1>Edit</h1>
+
+<form method="post" class="mt-3">
+  {% csrf_token %} {{ form }}
+  <button type="submit" class="btn btn-success">Edit</button>
+</form>
+{% endblock %}

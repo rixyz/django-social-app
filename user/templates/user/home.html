@@ -1,20 +1,2 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Home Page</title>
-  </head>
-  <body>
-    <h1>Welcome to My Social Media App!</h1>
-
-    {% if user.is_authenticated %}
-    <p>Welcome, {{ user.username }}!</p>
-    <form method="post" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit">logout</button>
-    </form>
-    {% else %}
-    <a href="{% url 'login' %}">Login</a>
-    <a href="{% url 'register' %}">Register</a>
-    {% endif %}
-  </body>
-</html>
+{% extends './base.html' %} {% block content %} Welcome to My Social Media App!
+{% endblock %}
