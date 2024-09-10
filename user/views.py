@@ -33,7 +33,7 @@ def userLogin(request):
     return render(request, 'user/login.html', context) 
 
 def home(request):
-    return render(request, 'user/home.html')
+    return render(request, 'post/home.html')
 
 def profile(request, username):
     try:
@@ -41,11 +41,10 @@ def profile(request, username):
         context = {'targetUser': targetUser}
         return render(request, 'user/profile.html', context)
     except User.DoesNotExist:
-        return render(request, 'user/home.html')
+        return render(request, 'post/home.html')
 
 @login_required
 def userEdit(request):
-    print('a')
     if request.method == 'POST':
         form =UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():

@@ -1,0 +1,28 @@
+{% extends './base.html' %} 
+{% block content %}
+{% if user.is_authenticated %}
+    <h2 class="text-center">Your Feed 
+    <a href="{% url 'post-create' %}" class="btn btn-outline-success">+</a>
+</h2>
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        {{ post.author.username }} - {{ post.created_at|date:"F d, Y" }}
+                    </div>
+                    <div class="card-body">
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+                        {% endif %}
+                        <p>{{ post.content }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <h2 class="text-center">Welcome to Social Media App!</h2>
+    <p>Please login to continue.</p>
+{% endif %}
+{% endblock %}
