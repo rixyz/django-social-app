@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .models import User
 from .forms import RegistrationForm, UserUpdateForm
 
-def userRegister(request):
+def user_register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -18,7 +18,7 @@ def userRegister(request):
         form = RegistrationForm()
     return render(request, 'user/register.html', {'form':form})
 
-def userLogin(request):
+def user_login(request):
     context = {}
     if request.method == 'POST':
         username = request.POST['username']
@@ -32,9 +32,6 @@ def userLogin(request):
     
     return render(request, 'user/login.html', context) 
 
-def home(request):
-    return render(request, 'post/home.html')
-
 def profile(request, username):
     try:
         targetUser = User.objects.get(username=username)
@@ -44,10 +41,13 @@ def profile(request, username):
         return render(request, 'post/home.html')
 
 @login_required
-def userEdit(request):
+def user_edit(request):
     if request.method == 'POST':
-        form =UserUpdateForm(request.POST, instance=request.user)
+        print("YES")
+        form =UserUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
+            for file_name, file_obj in request.FILES.items():
+                print(file_name, file_obj) 
             form.save()
             return redirect('profile', request.user.username)        
             
