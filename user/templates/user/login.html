@@ -1,5 +1,6 @@
 {% extends 'post/base.html' %} {% block title %} Login | Social Media App
 {%endblock %} {% block content %}
+<section class="border p-3 m-3">
 <h1>Login</h1>
 <form method="post" class="mt-3">
   {% csrf_token %} {% if error %}
@@ -15,4 +16,5 @@
   </div>
   <button type="submit" class="btn btn-primary">Login</button>
 </form>
+</section>
 {% endblock %}

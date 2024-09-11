@@ -1,5 +1,6 @@
-{% extends 'post/base.html' %} {% block title %} {{ targetUser.username }}'s
-Profile {%endblock %} {% block content %}
+{% extends 'post/base.html' %} 
+{% block title %} {{ targetUser.username }}'s Profile {%endblock %} 
+{% block content %}
 
 <section class="h-100 gradient-custom-2">
   <div class="container py-5 h-100">
@@ -12,15 +13,14 @@ Profile {%endblock %} {% block content %}
           >
             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px">
               <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                alt="Generic placeholder image"
+                src="{{targetUser.profile_picture.url}}" alt="Generic placeholder image"
                 class="img-fluid img-thumbnail mt-4 mb-2"
-                style="width: 150px; z-index: 1"
+                style="width: 150px; z-index: 1; height: 150px;object-fit: cover; object-position: 100%;"
               />
             </div>
             <div class="ms-3" style="margin-top: 130px">
               <h5>
-                {{ targetUser.username }} {% if user.is_authenticated %}
+                {{ targetUser.get_full_name }} {% if user == targetUser %}
                 <a href="{%url 'edit' %}" class="btn btn-primary">Edit</a>
                 {% endif %}
               </h5>

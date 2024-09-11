@@ -25,8 +25,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', post_views.home, name='home'),
-    path('register/', user_views.userRegister, name='register'),
-    path('login/', user_views.userLogin, name='login'),
+    path('register/', user_views.user_register, name='register'),
+    path('login/', user_views.user_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='post/home.html'), name='logout'),
 
     path('user/', include('user.urls')),

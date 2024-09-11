@@ -1,0 +1,26 @@
+/* Base styles */
+label {
+  font-weight: bold;
+  padding-top: 10px;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 100%;
+}
+
+.errorlist {
+  color: red;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Bootstrap Edit */
+
+.card {
+  margin: 30px; /* Example spacing */
+}
