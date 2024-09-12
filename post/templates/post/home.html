@@ -1,28 +1,62 @@
 {% extends './base.html' %} 
+{% load post_extras %} {% load static %} 
+
 {% block content %}
-{% if user.is_authenticated %}
-    <h2 class="text-center">Your Feed 
+<div>
+  {% if user.is_authenticated %}
+  <h2 class="text-center">
+    Your Feed
     <a href="{% url 'post-create' %}" class="btn btn-outline-success">+</a>
-</h2>
-    <div class="row">
-        {% for post in posts %}
-            <div class="col-md-4">
-                <div class="card mb-3">
-                    <div class="card-header">
-                        {{ post.author.username }} - {{ post.created_at|date:"F d, Y" }}
-                    </div>
-                    <div class="card-body">
-                        {% if post.image %}
-                            <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
-                        {% endif %}
-                        <p>{{ post.content }}</p>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
+  </h2>
+
+  {% for post in posts %}
+  <div class="card">
+    <div class="card-header">
+      <img
+        src="{{ post.author.profile_picture.url }}"
+        alt="Profile picture"
+        class="rounded-circle me-2"
+        style="width: 30px; height: 30px"
+      />
+      <a href="{% url 'profile' post.author.username %}">
+        {{ post.author.username }}
+      </a>
+      - {{ post.created_at|date:"F d, Y" }}
     </div>
-{% else %}
-    <h2 class="text-center">Welcome to Social Media App!</h2>
-    <p>Please login to continue.</p>
-{% endif %}
+    <div class="card-body">
+      {% if post.image %}
+      <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" />
+      {% endif %}
+      <p>{{ post.content }}</p>
+    </div>
+    <div class="card-footer">
+      <button
+        class="like-button btn btn-sm btn-primary {% if post|liked_by:user %} active{% endif %}"
+        data-post-id="{{ post.id }}">
+        Like (<span class="likes-count">{{ post.likes.count }}</span>)
+      </button>
+      <a
+        href="{% url 'post-detail' post.id %}"
+        class="btn btn-sm btn-secondary"
+      >
+        Comment
+      </a>
+      <div class="comments-section mt-3">
+        {% if post.comments.all %}
+        <strong>{{ post.comments.latest.user.username }}:</strong>
+        {{post.comments.latest.content }} {% else %} No comments yet. 
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %} 
+  {% else %}
+  <h2 class="text-center">Welcome to Social Media App!</h2>
+  <p class="text-center">Please login to continue.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block script%}
+  {% include 'post/snippets/like_post.html' %}
 {% endblock %}
