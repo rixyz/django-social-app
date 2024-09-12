@@ -77,7 +77,6 @@ def add_comment(request, post_id):
         comment.post = post
         comment.user = request.user
         comment.save()
-        print(comment, comment.post, comment.user)
         return JsonResponse({
             'success': True,
             'comment_id': comment.id,
