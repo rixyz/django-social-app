@@ -34,8 +34,6 @@ urlpatterns = [
     path('post/', include('post.urls')),
     path('friend/', include('friend.urls')),
 
-    path('<str:username>/', user_views.profile, name='profile'),
-
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
