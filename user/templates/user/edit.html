@@ -1,11 +1,12 @@
-{% extends 'post/base.html' %} {% block title %} Edit | Social Media App
-{%endblock %} {% block content %}
+{% extends 'post/base.html' %} 
+{% block title %} Edit {%endblock %} 
+{% block content %}
 <section class="border p-3 m-3">
-<h1>Edit</h1>
+  <h1>Edit</h1>
 
-<form method="post" enctype="multipart/form-data" class="mt-3">
-  {% csrf_token %} {{ form }}
-  <button type="submit" class="btn btn-success mt-3">Edit</button>
-</form>
+  <form method="post" enctype="multipart/form-data" class="mt-3">
+    {% csrf_token %} {{ form }}
+    <button type="submit" class="btn btn-success mt-3">Edit</button>
+  </form>
 </section>
 {% endblock %}
