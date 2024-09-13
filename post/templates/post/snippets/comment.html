@@ -8,7 +8,7 @@
       let content = form.find('input[name="content"]').val();
 
       $.ajax({
-        url: "{% url 'add-comment' '100' %}".replace("100", postId),
+        url: "{% url 'add-comment' 100 %}".replace("100", postId),
         type: "POST",
         data: {
           content: content,
@@ -27,92 +27,95 @@
             form.find('input[name="content"]').val("");
           }
         },
+        error: function (xhr, status, error) {
+          console.error("Error adding comment:", error);
+        },
       });
     });
 
     // Edit comment
     $(document).on("click", ".edit-comment", function () {
-        var commentId = $(this).data("comment-id");
-        var commentLi = $(`#comment-${commentId}`);
-    
-        $.ajax({
-          url: "{% url 'get-comment' '100' %}".replace("100", commentId),
-          type: "GET",
-          success: function (data) {
-            if (data) {
-              let form = `
+      let commentId = $(this).data("comment-id");
+      let commentLi = $(`#comment-${commentId}`);
+
+      $.ajax({
+        url: "{% url 'get-comment' 100 %}".replace("100", commentId),
+        type: "GET",
+        success: function (data) {
+          if (data) {
+            let form = `
                 <form class="edit-comment-form" data-comment-id="${data.id}">
                   <input type="text" class="form-control" name="content" value="${data.content}">
                   <button type="submit" class="btn btn-sm btn-primary">Save</button>
                   <button type="button" class="btn btn-sm btn-secondary cancel-edit">Cancel</button>
                 </form>
               `;
-              commentLi.html(form);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error fetching comment:", error);
+            commentLi.html(form);
           }
-        });
+        },
+        error: function (xhr, status, error) {
+          console.error("Error editing comment:", error);
+        },
       });
-    
-      $(document).on("submit", ".edit-comment-form", function (e) {
-        e.preventDefault();
-        let form = $(this);
-        let commentId = form.data("comment-id");
-        let content = form.find('input[name="content"]').val();
-    
-        $.ajax({
-          url: "{% url 'edit-comment' '100' %}".replace("100", commentId),
-          type: "POST",
-          data: {
-            content: content,
-            csrfmiddlewaretoken: '{{csrf_token}}',
-          },
-          success: function (data) {
-            if (data.success) {
-              let commentHtml = `
+    });
+
+    $(document).on("submit", ".edit-comment-form", function (e) {
+      e.preventDefault();
+      let form = $(this);
+      let commentId = form.data("comment-id");
+      let content = form.find('input[name="content"]').val();
+
+      $.ajax({
+        url: "{% url 'edit-comment' 100 %}".replace("100", commentId),
+        type: "POST",
+        data: {
+          content: content,
+          csrfmiddlewaretoken: "{{csrf_token}}",
+        },
+        success: function (data) {
+          if (data.success) {
+            let commentHtml = `
                 <strong>${data.author}:</strong> ${data.content}
                 <button class="btn btn-sm btn-outline-primary edit-comment" data-comment-id="${commentId}">Edit</button>
                 <button class="btn btn-sm btn-outline-danger delete-comment" data-comment-id="${commentId}">Delete</button>
               `;
-              $(`#comment-${commentId}`).html(commentHtml);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error updating comment:", error);
+            $(`#comment-${commentId}`).html(commentHtml);
           }
-        });
+        },
+        error: function (xhr, status, error) {
+          console.error("Error updating comment:", error);
+        },
       });
-    
-      $(document).on("click", ".cancel-edit", function () {
-        let commentId = $(this).closest("form").data("comment-id");
-        
-        $.ajax({
-          url: "{% url 'get-comment' '100' %}".replace("100", commentId),
-          type: "GET",
-          success: function (data) {
-            if (data) {
-              let commentHtml = `
+    });
+
+    $(document).on("click", ".cancel-edit", function () {
+      let commentId = $(this).closest("form").data("comment-id");
+
+      $.ajax({
+        url: "{% url 'get-comment' '100' %}".replace("100", commentId),
+        type: "GET",
+        success: function (data) {
+          if (data) {
+            let commentHtml = `
                 <strong>${data.author}:</strong> ${data.content}
                 <button class="btn btn-sm btn-outline-primary edit-comment" data-comment-id="${data.id}">Edit</button>
                 <button class="btn btn-sm btn-outline-danger delete-comment" data-comment-id="${data.id}">Delete</button>
               `;
-              $(`#comment-${data.id}`).html(commentHtml);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error fetching comment:", error);
+            $(`#comment-${data.id}`).html(commentHtml);
           }
-        });
+        },
+        error: function (xhr, status, error) {
+          console.error("Error fetching comment:", error);
+        },
       });
+    });
 
     // Delete comment
     $(document).on("click", ".delete-comment", function () {
       let commentId = $(this).data("comment-id");
       if (confirm("Are you sure you want to delete this comment?")) {
         $.ajax({
-          url: "{% url 'delete-comment' '100' %}".replace("100", commentId),
+          url: "{% url 'delete-comment' 100 %}".replace("100", commentId),
           type: "POST",
           data: {
             csrfmiddlewaretoken: "{{csrf_token}}",
@@ -121,6 +124,9 @@
             if (data.success) {
               $(`#comment-${commentId}`).remove();
             }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error deleting comment:", error);
           },
         });
       }

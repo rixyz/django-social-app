@@ -1,0 +1,87 @@
+<script>
+  $(document).ready(function () {
+    function updateFriendRequestNotification() {
+      $.ajax({
+        url: '{% url "request-list" %}',
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+          const badge = $("#friendRequestBadge");
+          const count = $("#friendRequestCount");
+          const list = $("#friendRequestList");
+          const noRequestsMessage = $("#noRequestsMessage");
+
+          if (data.friend_requests.length > 0) {
+            badge.removeClass("d-none");
+            count.text(data.friend_requests.length);
+            noRequestsMessage.addClass("d-none");
+            list.empty();
+            $.each(data.friend_requests, function (index, request) {
+              const div = $("<div>").addClass(
+                "d-flex justify-content-between align-items-center mb-2"
+              );
+              div.html(`
+                        <span>${request.user.username}</span>
+                            <div>
+                                <button class="btn btn-success btn-sm accept-request" data-id="${request.id}">Accept</button>
+                                <button class="btn btn-danger btn-sm reject-request" data-id="${request.id}">Reject</button>
+                            </div>
+                        `);
+              list.append(div);
+            });
+
+            addFriendRequestListeners();
+          } else {
+            badge.addClass("d-none");
+            list.html("<p>No pending friend requests.</p>");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error fetching friend requests:", error);
+        },
+      });
+    }
+
+    function addFriendRequestListeners() {
+      $(".accept-request, .reject-request")
+        .off("click")
+        .on("click", function () {
+          const action = $(this).hasClass("accept-request")
+            ? "accept"
+            : "reject";
+          const requestId = $(this).data("id");
+          handleFriendRequest(action, requestId);
+        });
+    }
+
+    function handleFriendRequest(action, requestId) {
+      let url;
+      if (action === "accept") {
+        url = "{% url 'accept-request' 000 %}".replace("0", requestId);
+      } else if (action === "reject") {
+        url = "{% url 'reject-request' 000 %}".replace("0", requestId);
+      }
+      $.ajax({
+        url: url,
+        type: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        dataType: "json",
+        success: function (data) {
+          if (data.status === "success") {
+            updateFriendRequestNotification();
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error(`Error ${action}ing friend request:`, error);
+        },
+      });
+    }
+
+    // Update notification in interval
+    setInterval(updateFriendRequestNotification, 60000);
+
+    updateFriendRequestNotification();
+  });
+</script>

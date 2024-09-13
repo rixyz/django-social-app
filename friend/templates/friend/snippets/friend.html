@@ -1,0 +1,56 @@
+<script type="text/javascript">
+  function sendFriendRequest(targetId) {
+    $.ajax({
+      url: "{% url 'send-request' 100 %}".replace("100", targetId),
+      type: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+      success: function (data) {
+        if (data) {
+          const button = document.getElementById("friend-button");
+          if (data.status) {
+            button.textContent = "Pending";
+            button.classList.remove("btn-primary"); 
+            button.classList.add("btn-secondary"); 
+          } else {
+            console.warn("Unexpected response:", data);
+          }
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("AJAX error:", textStatus, errorThrown);
+        console.log("Response:", jqXHR.responseText);
+      },
+    });
+  }
+
+  function unfriend(targetId) {
+    console.log(targetId)
+    $.ajax({
+      url: "{% url 'unfriend' 100 %}".replace("100", targetId),
+      type: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+      success: function (data) {
+        if (data) {
+          const button = document.getElementById("friend-button");
+          if (data.status) {
+            button.textContent = "Add";
+            button.classList.remove("btn-danger"); 
+            button.classList.add("btn-primary"); 
+            button.onClick =  `sendFriendRequest(${targetId})`;
+          } else {
+            console.warn("Unexpected response:", data);
+          }
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("AJAX error:", textStatus, errorThrown);
+        console.log("Response:", jqXHR.responseText);
+      },
+    });
+  }
+
+</script>

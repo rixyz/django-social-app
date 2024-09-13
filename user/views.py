@@ -35,7 +35,11 @@ def user_login(request):
 def profile(request, username):
     try:
         targetUser = User.objects.get(username=username)
-        context = {'targetUser': targetUser}
+        posts = targetUser.post_set.all().order_by('-created_at')
+        context = {
+            'targetUser': targetUser, 
+            'posts': posts,
+        }
         return render(request, 'user/profile.html', context)
     except User.DoesNotExist:
         return render(request, 'post/home.html')

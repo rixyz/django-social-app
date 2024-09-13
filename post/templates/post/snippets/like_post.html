@@ -1,33 +1,29 @@
 <script type="text/javascript">
-  $(document).ready(function() {
-      $('.like-button').click(function(e) {
-          console.log("Pressed")
-          e.preventDefault();
-          var button = $(this);
-          var postId = button.data('post-id');
-          var likesCount = button.find('.likes-count');
-
-          $.ajax({
-              url: "{% url 'like-post' '100' %}".replace("100", postId),
-              type: 'POST',
-              headers: {
-                  'X-CSRFToken': '{{csrf_token}}'
-              },
-              success: function(data) {
-
-          console.log("Sent")
-                  if (data.liked) {
-                      button.addClass('active');
-                  } else {
-                      button.removeClass('active');
-                  }
-                  likesCount.text(data.likes_count);
-              },
-              error: function(jqXHR, textStatus, errorThrown) {
-                  console.error('AJAX error:', textStatus, errorThrown);
-                  console.log('Response:', jqXHR.responseText);
-              }
-          });
+  $(document).ready(function () {
+    $(".like-button").click(function (e) {
+      e.preventDefault();
+      let button = $(this);
+      let postId = button.data("post-id");
+      let likesCount = button.find(".likes-count");
+      $.ajax({
+        url: "{% url 'like-post' 100 %}".replace("100", postId),
+        type: "POST",
+        headers: {
+          "X-CSRFToken": "{{csrf_token}}",
+        },
+        success: function (data) {
+          if (data.liked) {
+            button.addClass("active");
+          } else {
+            button.removeClass("active");
+          }
+          likesCount.text(data.likes_count);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("AJAX error:", textStatus, errorThrown);
+          console.log("Response:", jqXHR.responseText);
+        },
       });
     });
+  });
 </script>

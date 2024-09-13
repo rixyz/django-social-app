@@ -1,0 +1,45 @@
+{% load post_extras %}
+{% for post in posts %}
+<div class="card">
+  <div class="card-header">
+    <img
+      src="{{ post.author.profile_picture.url }}"
+      alt="Profile picture"
+      class="rounded-circle me-2"
+      style="width: 30px; height: 30px"
+    />
+    <a href="{% url 'profile' post.author.username %}">
+      {{ post.author.username }}
+    </a>
+    - {{ post.created_at|date:"F d, Y" }}
+  </div>
+  <div class="card-body">
+    {% if post.image %}
+    <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" />
+    {% endif %}
+    <p>{{ post.content }}</p>
+  </div>
+  <div class="card-footer">
+    <button
+    class="like-button btn btn-sm btn-primary {% if post|liked_by:user %} active{% endif %}"
+    data-post-id="{{ post.id }}">
+    Like (<span class="likes-count">{{ post.likes.count }}</span>)
+    </button>    
+    <a href="{% url 'post-detail' post.id %}" class="btn btn-sm btn-secondary">
+      Comment
+    </a>
+    <div class="comments-section mt-3">
+      {% if post.comments.all %}
+      <strong>{{ post.comments.latest.user.username }}:</strong>
+      {{post.comments.latest.content }} 
+      {% else %} 
+      No comments yet. 
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+{% block script%}
+  {% include 'post/snippets/like_post.html' %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% load friend_extras %} {% if user|is_friend:targetUser %}
+<button 
+  id="friend-button"
+  class="btn btn-sm btn-danger"
+  onclick="unfriend({{ targetUser.id }})"
+>
+  Remove
+</button>
+{% elif user|is_pending:targetUser %}
+<button
+  id="friend-button"
+  class="btn btn-sm btn-secondary"
+>
+  Pending
+</button>
+{% elif user|has_sent:targetUser %}
+<span>
+    <button class="btn btn-success btn-sm accept-request">Accept</button>
+    <button class="btn btn-danger btn-sm reject-request">Reject</button>
+</span>
+{% else %}
+<button
+  id="friend-button"
+  class="btn btn-sm btn-primary"
+  onclick="sendFriendRequest({{ targetUser.id }})"
+>
+  Add
+</button>
+{% endif %}
+
+{% block script %}
+{% include 'friend/snippets/friend.html' %}
+{% endblock script %}
