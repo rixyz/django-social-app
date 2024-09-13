@@ -1,6 +1,12 @@
 from django.db import models
 from user.models import User
 
+def rename_post_image(instance, filename):
+    name, ext = os.path.splitext(filename)
+    new_name = instance.username.lower() + datetime.datetime.now().strftime('-%Y-%b-%d-%H-%M-%S') + ext
+    print(new_name)
+    return '{}/{}'.format('post_images', new_name)
+
 class CreatedAtModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -10,7 +16,7 @@ class CreatedAtModel(models.Model):
 class Post(CreatedAtModel):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=500)
-    image = models.ImageField(upload_to='post_images', null=True, blank=True)
+    image = models.ImageField(upload_to=rename_post_image, null=True, blank=True)
 
     def liked_by(self, user):
         return self.likes.filter(user=user).exists()
