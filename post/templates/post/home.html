@@ -10,7 +10,9 @@
     <a href="{% url 'post-create' %}" class="btn btn-outline-success">+</a>
   </h2>
 
+  <div class="w-50 m-auto mt-3">
     {% include 'post/post_template.html' %}
+  </div>
   {% else %}
   <h2 class="text-center">Welcome to Social Media App!</h2>
   <p class="text-center">Please login to continue.</p>

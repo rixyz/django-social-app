@@ -29,6 +29,7 @@ urlpatterns = [
     path('register/', user_views.user_register, name='register'),
     path('login/', user_views.user_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='post/home.html'), name='logout'),
+    path('', post_views.home, name='home'),
 
     path('user/', include('user.urls')),
     path('post/', include('post.urls')),

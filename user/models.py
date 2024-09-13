@@ -7,7 +7,6 @@ import datetime
 def rename_profile_picture(instance, filename):
     name, ext = os.path.splitext(filename)
     new_name = instance.username.lower() + datetime.datetime.now().strftime('-%Y-%b-%d-%H-%M-%S') + ext
-    print(new_name)
     return '{}/{}'.format('profile_picture', new_name)
 
 class User(AbstractUser):

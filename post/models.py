@@ -1,10 +1,12 @@
 from django.db import models
 from user.models import User
 
+import os
+import datetime
+
 def rename_post_image(instance, filename):
     name, ext = os.path.splitext(filename)
-    new_name = instance.username.lower() + datetime.datetime.now().strftime('-%Y-%b-%d-%H-%M-%S') + ext
-    print(new_name)
+    new_name = instance.content[:10].lower() + datetime.datetime.now().strftime('-%Y-%b-%d-%H-%M-%S') + ext
     return '{}/{}'.format('post_images', new_name)
 
 class CreatedAtModel(models.Model):
