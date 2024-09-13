@@ -1,10 +1,10 @@
 {% load post_extras %}
 {% for post in posts %}
-<div class="card">
+<div class="card mb-3">
   <div class="card-header">
     <img
       src="{{ post.author.profile_picture.url }}"
-      alt="Profile picture"
+      alt="{{post.author.username}}'s profile picture"
       class="rounded-circle me-2"
       style="width: 30px; height: 30px"
     />
@@ -23,10 +23,10 @@
     <button
     class="like-button btn btn-sm btn-primary {% if post|liked_by:user %} active{% endif %}"
     data-post-id="{{ post.id }}">
-    Like (<span class="likes-count">{{ post.likes.count }}</span>)
+    <i class="fa fa-thumbs-up"></i> (<span class="likes-count">{{ post.likes.count }}</span>)
     </button>    
     <a href="{% url 'post-detail' post.id %}" class="btn btn-sm btn-secondary">
-      Comment
+      <i class="fa fa-comment"></i>
     </a>
     <div class="comments-section mt-3">
       {% if post.comments.all %}

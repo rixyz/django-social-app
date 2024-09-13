@@ -14,7 +14,7 @@
       <button
       class="like-button btn btn-sm btn-primary {% if post|liked_by:user %} active{% endif %}"
       data-post-id="{{ post.id }}">
-      Like (<span class="likes-count">{{ post.likes.count }}</span>)
+      <i class="fa fa-thumbs-up"></i> (<span class="likes-count">{{ post.likes.count }}</span>)
       </button>
       <small class="text-muted">{{ post.created_at|date:"F d, Y" }}</small>
     </div>
