@@ -16,15 +16,22 @@
             count.text(data.friend_requests.length);
             noRequestsMessage.addClass("d-none");
             list.empty();
-            $.each(data.friend_requests, function (index, request) {
+            $.each(data.friend_requests, function (index, frRequest) {
               const div = $("<div>").addClass(
                 "d-flex justify-content-between align-items-center mb-2"
               );
-              div.html(`
-                        <span>${request.user.username}</span>
+              div.html(`           
+                        <span>
+                            <img
+                              src="${frRequest.user.pictureUrl}"
+                              alt="${frRequest.user.username}'s profile picture"
+                              class="rounded-circle me-2"
+                              style="width: 40px; height: 40px"
+                            />
+                            ${frRequest.user.username}</span>
                             <div>
-                                <button class="btn btn-success btn-sm accept-request" data-id="${request.id}">Accept</button>
-                                <button class="btn btn-danger btn-sm reject-request" data-id="${request.id}">Reject</button>
+                                <button class="btn btn-success btn-sm accept-request" data-id="${frRequest.id}">Accept</button>
+                                <button class="btn btn-danger btn-sm reject-request" data-id="${frRequest.id}">Reject</button>
                             </div>
                         `);
               list.append(div);

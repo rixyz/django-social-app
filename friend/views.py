@@ -48,7 +48,8 @@ def friend_request_list(request):
                 'id': fr.id,
                 'user': {
                     'id': fr.user.id,
-                    'username': fr.user.username
+                    'username': fr.user.username,
+                    'pictureUrl': fr.user.profile_picture.url,
                 }
             } for fr in friend_requests
         ]
