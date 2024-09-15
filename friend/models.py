@@ -17,7 +17,7 @@ class Friend(models.Model):
         unique_together = ('user', 'friend')
 
     def __str__(self):
-        return f"{self.user.username} -> {self.friend.username}"
+        return f"{self.user.username} -> {self.friend.username} ({self.status})"
     
 
     @classmethod

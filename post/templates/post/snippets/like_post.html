@@ -8,9 +8,6 @@
       $.ajax({
         url: "{% url 'like-post' 100 %}".replace("100", postId),
         type: "POST",
-        headers: {
-          "X-CSRFToken": "{{csrf_token}}",
-        },
         success: function (data) {
           if (data.liked) {
             button.addClass("active");

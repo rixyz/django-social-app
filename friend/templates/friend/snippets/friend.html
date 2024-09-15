@@ -3,9 +3,6 @@
     $.ajax({
       url: "{% url 'send-request' 100 %}".replace("100", targetId),
       type: "POST",
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-      },
       success: function (data) {
         if (data) {
           const button = document.getElementById("friend-button");
@@ -30,9 +27,6 @@
     $.ajax({
       url: "{% url 'unfriend' 100 %}".replace("100", targetId),
       type: "POST",
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-      },
       success: function (data) {
         if (data) {
           const button = document.getElementById("friend-button");
@@ -40,7 +34,7 @@
             button.textContent = "Add";
             button.classList.remove("btn-danger"); 
             button.classList.add("btn-primary"); 
-            button.onClick =  `sendFriendRequest(${targetId})`;
+            element.addEventListener("click",`sendFriendRequest(${targetId})`);
           } else {
             console.warn("Unexpected response:", data);
           }
