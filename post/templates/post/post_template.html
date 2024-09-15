@@ -8,20 +8,20 @@
       class="rounded-circle me-2"
       style="width: 30px; height: 30px"
     />
-    <a href="{% url 'profile' post.author.username %}">
+    <a href="{% url 'profile' post.author.username %}" class="text-decoration-none text-dark"> 
       {{ post.author.username }}
     </a>
     - {{ post.created_at|date:"F d, Y" }}
   </div>
   <div class="card-body">
     {% if post.image %}
-    <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" />
+    <img src="{{ post.image.url }}" class="card-img-top mb-1" alt="Post Image" />
     {% endif %}
-    <p>{{ post.content }}</p>
+    <p class="m-0">{{ post.content }}</p>
   </div>
   <div class="card-footer">
     <button
-    class="like-button btn btn-sm btn-primary {% if post|liked_by:user %} active{% endif %}"
+    class="like-button btn btn-sm btn-primary {% if user.is_authenticated %} {% if post|liked_by:user %} active{% endif %}{% endif %}"
     data-post-id="{{ post.id }}">
     <i class="fa fa-thumbs-up"></i> (<span class="likes-count">{{ post.likes.count }}</span>)
     </button>    

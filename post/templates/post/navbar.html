@@ -25,6 +25,8 @@
                             <button type="submit" class="btn btn-link nav-link">Logout</button>
                         </form>
                     </li>
+                    {% include 'friend/friend_request_badge.html' %}
+                    {% include 'friend/snippets/badge.html' %}
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
@@ -36,8 +38,6 @@
             </ul>
         </div>
     </div>
-    {% include 'friend/friend_request_badge.html' %}
-    {% include 'friend/snippets/badge.html' %}
 </nav>
 
 
