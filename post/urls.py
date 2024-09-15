@@ -1,13 +1,12 @@
 from django.urls import path
-from . import views
+from .views import PostDetailView, LikePostView, CommentView, GetCommentView, CreatePostView
 
 urlpatterns = [
-    path('new/', views.create_post, name='post-create'),
-    path('view/<int:post_id>/', views.post_detail, name='post-detail'),
-    path('like/<int:post_id>/', views.like_post, name='like-post'),
-    path('<int:post_id>/comment/add/', views.add_comment, name='add-comment'),
-    path('comment/<int:comment_id>', views.get_comment, name='get-comment'),
-    path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit-comment'),
-    path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete-comment'),
-    
+    path('new/', CreatePostView.as_view(), name='post-create'),
+    path('<int:pk>/', PostDetailView.as_view(), name='post-detail'), 
+    path('<int:post_id>/like/', LikePostView.as_view(), name='like-post'),
+    path('<int:post_id>/comment/', CommentView.as_view(), name='add-comment'),
+    path('comment/<int:comment_id>/', GetCommentView.as_view(), name='get-comment'),
+    path('comment/<int:comment_id>/edit/', CommentView.as_view(), name='edit-comment'),
+    path('comment/<int:comment_id>/delete/', CommentView.as_view(), name='delete-comment'),
 ]

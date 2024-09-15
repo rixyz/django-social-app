@@ -1,60 +1,44 @@
-from django.shortcuts import render
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.views.generic import CreateView, DetailView, UpdateView
+from django.urls import reverse_lazy
 
 from .models import User
 from .forms import RegistrationForm, UserUpdateForm
 
-def user_register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')        
-            
-    else:
-        form = RegistrationForm()
-    return render(request, 'user/register.html', {'form':form})
-
-def user_login(request):
-    context = {}
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('/home')
-        else:
-            context = {'error': 'Invalid username or password'}
+class UserRegisterView(CreateView):
     
-    return render(request, 'user/login.html', context) 
+    template_name = 'user/register.html'
+    success_url = reverse_lazy('login')
+    form_class = RegistrationForm
 
-def profile(request, username):
-    try:
-        targetUser = User.objects.get(username=username)
-        posts = targetUser.post_set.all().order_by('-created_at')
-        context = {
-            'targetUser': targetUser, 
-            'posts': posts,
-        }
-        return render(request, 'user/profile.html', context)
-    except User.DoesNotExist:
-        return render(request, 'post/home.html')
+class UserLoginView(LoginView):
+    template_name = 'user/login.html'
+    redirect_authenticated_user = True
+    success_url = reverse_lazy('login')
+    
+    def get_success_url(self):
+        return reverse_lazy('home') 
+    
+class ProfileView(DetailView):
+    model = User
+    template_name = 'user/profile.html'
+    context_object_name = 'targetUser'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
 
-@login_required
-def user_edit(request):
-    if request.method == 'POST':
-        print("YES")
-        form =UserUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            for file_name, file_obj in request.FILES.items():
-                print(file_name, file_obj) 
-            form.save()
-            return redirect('profile', request.user.username)        
-            
-    else: 
-            form = UserUpdateForm(instance=request.user)
-    return render(request, 'user/edit.html', {'form':form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = self.object.post_set.all().order_by('-created_at')
+        return context
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = 'user/edit.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})

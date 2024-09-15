@@ -15,26 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 
-from user import views as user_views
-from post import views as post_views
+from post.views import PostListView
+from user.views import UserRegisterView, UserLoginView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('home/', post_views.home, name='home'),
-    path('register/', user_views.user_register, name='register'),
-    path('login/', user_views.user_login, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='post/home.html'), name='logout'),
-    path('', post_views.home, name='home'),
+    path('', PostListView.as_view(), name='home'),
+    path('home/', PostListView.as_view(), name='home'),
+    path('register/', UserRegisterView.as_view(), name='register'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(template_name='post/home.html'), name='logout'),
 
     path('user/', include('user.urls')),
     path('post/', include('post.urls')),
     path('friend/', include('friend.urls')),
-
+    path('admin/', admin.site.urls),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

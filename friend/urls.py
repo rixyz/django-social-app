@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.friend_list, name='friend_list'),
+    path('', views.FriendListView.as_view(), name='friend-list'),
     path('add/<int:user_id>/', views.send_friend_request, name='send-request'),
     path('accept/<int:fr_request_id>/', views.accept_friend_request, name='accept-request'),
     path('reject/<int:fr_request_id>/', views.reject_friend_request, name='reject-request'),
