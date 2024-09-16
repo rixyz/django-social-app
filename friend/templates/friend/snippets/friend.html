@@ -1,7 +1,7 @@
 <script type="text/javascript">
   function sendFriendRequest(targetId) {
     $.ajax({
-      url: "{% url 'send-request' 100 %}".replace("100", targetId),
+      url: "{% url 'send-request' 0 %}".replace("0", targetId),
       type: "POST",
       success: function (data) {
         if (data) {
@@ -23,10 +23,10 @@
   }
 
   function unfriend(targetId) {
-    console.log(targetId)
+    console.log("unFriend")
     $.ajax({
-      url: "{% url 'unfriend' 100 %}".replace("100", targetId),
-      type: "POST",
+      url: "{% url 'unfriend' 0 %}".replace("0", targetId),
+      type: "DELETE",
       success: function (data) {
         if (data) {
           const button = document.getElementById("friend-button");
@@ -34,7 +34,7 @@
             button.textContent = "Add";
             button.classList.remove("btn-danger"); 
             button.classList.add("btn-primary"); 
-            element.addEventListener("click",`sendFriendRequest(${targetId})`);
+            button.addEventListener("click",`sendFriendRequest(${targetId})`);
           } else {
             console.warn("Unexpected response:", data);
           }

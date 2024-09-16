@@ -10,13 +10,14 @@
           const count = $("#friendRequestCount");
           const list = $("#friendRequestList");
           const noRequestsMessage = $("#noRequestsMessage");
+          let frCount = Object.keys(data).length
 
-          if (data.friend_requests.length > 0) {
+          if (frCount) {
             badge.removeClass("d-none");
-            count.text(data.friend_requests.length);
+            count.text(frCount);
             noRequestsMessage.addClass("d-none");
             list.empty();
-            $.each(data.friend_requests, function (index, frRequest) {
+            $.each(data, function (index, frRequest) {
               const div = $("<div>").addClass(
                 "d-flex justify-content-between align-items-center mb-2"
               );
@@ -36,7 +37,6 @@
                         `);
               list.append(div);
             });
-
             addFriendRequestListeners();
           } else {
             badge.addClass("d-none");
@@ -64,13 +64,13 @@
     function handleFriendRequest(action, requestId) {
       let url;
       if (action === "accept") {
-        url = "{% url 'accept-request' 0 %}".replace("0", requestId);
+        url = "{% url 'accept-request' action='accept' fr_request_id=0 %}".replace("0", requestId);
       } else if (action === "reject") {
-        url = "{% url 'reject-request' 0 %}".replace("0", requestId);
+        url = "{% url 'reject-request' action='reject' fr_request_id=0 %}".replace("0", requestId);
       }
       $.ajax({
         url: url,
-        type: "POST",
+        type: "PUT",
         dataType: "json",
         success: function (data) {
           if (data.status === "success") {

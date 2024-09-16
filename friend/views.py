@@ -1,14 +1,81 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
+from rest_framework import status
+from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Friend
 from user.models import User
-    
+from .serializers import FriendSerializer
+from .permissions import IsOwnerOrReadOnly
+
+class FriendAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get(self, request):
+        """
+        Retrieve a list of the user's friend requests.
+        """
+        friend_requests = Friend.get_friend_requests(request.user)
+        serializer = FriendSerializer(friend_requests, many=True) 
+        return Response(serializer.data)
+
+    def post(self, request, user_id):
+        """
+        Send a friend request to another user.
+        """
+        to_user = get_object_or_404(User, pk=user_id)
+        if request.user == to_user:
+            return Response({'error': 'Cannot send a friend request to yourself'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            friend = Friend.send_friend_request(request.user, to_user)
+            return Response({'status': 'success', 'friend_id': friend.id}, status=status.HTTP_201_CREATED)
+        except :
+            return Response({'error': 'Failed to send friend request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request, action, fr_request_id):
+        """
+        Accept or reject a friend request.
+        """
+        friendship = get_object_or_404(Friend, pk=fr_request_id)
+
+        if friendship.friend != request.user:
+            return Response({'error': 'You cannot accept or reject this request'}, status=status.HTTP_403_FORBIDDEN)
+
+        if action == 'accept':
+            friendship = Friend.accept_friend_request(friendship.user, request.user)
+            return Response({'status': 'success', 'friend_id': friendship.id})
+        elif action == 'reject':
+            friendship.delete()
+            return Response({'status': 'success'})
+        else:
+            return Response({'error': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, friend_id):
+        """
+        Unfriend another user.
+        """
+
+        friend = get_object_or_404(User, id=friend_id)
+        friendship = get_object_or_404(Friend, friend = friend, user = request.user)
+
+        if not (friendship.user == request.user or friendship.friend == request.user):
+            return Response({'error': 'You cannot unfriend this user'}, status=status.HTTP_403_FORBIDDEN)
+
+        Friend.unfriend(request.user, friend)
+        return Response({'status': 'success'})
+
 class FriendListView(LoginRequiredMixin, ListView):
+    """
+    List view for user's friend list
+    """
+
     model = Friend
     template_name = 'friend/friend_list.html'
     context_object_name = 'friends'
@@ -27,55 +94,6 @@ class FriendListView(LoginRequiredMixin, ListView):
                     'full_name': fr.get_full_name(),
                     'profile_picture': fr.profile_picture.url,
                 }
-            } for fr in context['friends']
+            } for fr in context['friends'] # "context must be a dict rather than QuerySet"
         ]
         return context
-
-@login_required
-@require_POST
-def send_friend_request(request, user_id):
-    to_user = get_object_or_404(User, id=user_id)
-    friend = Friend.send_friend_request(request.user, to_user)
-    return JsonResponse({'status': 'success', 'friend_id': friend.id})
-
-@login_required
-@require_POST
-def accept_friend_request(request, fr_request_id):
-    friendship = get_object_or_404(Friend, id=fr_request_id)
-    if friendship.friend == request.user:  
-        friendship = Friend.accept_friend_request(friendship.user, request.user)
-        return JsonResponse({'status': 'success', 'friend_id': friendship.id})
-
-@login_required
-@require_POST
-def reject_friend_request(request, fr_request_id):
-    friendship = get_object_or_404(Friend, id=fr_request_id)
-    if friendship.friend == request.user:  
-        friendship = Friend.reject_friend_request(friendship.user, request.user)
-        return JsonResponse({'status': 'success', 'friend_id': friendship.id})
-
-@login_required
-@require_POST
-def unfriend(request, user_id):
-    friend = get_object_or_404(User, id=user_id)
-    friendship = get_object_or_404(Friend, friend=friend, user = request.user)
-    if (friendship.user == request.user or friendship.friend == request.user):
-        Friend.unfriend(request.user, friend)
-        return JsonResponse({'status': 'success'})
-
-@login_required
-def friend_request_list(request):
-    friend_requests = Friend.get_friend_requests(request.user)
-    data = {
-        'friend_requests': [
-            {
-                'id': fr.id,
-                'user': {
-                    'id': fr.user.id,
-                    'username': fr.user.username,
-                    'profile_picture': fr.user.profile_picture.url,
-                }
-            } for fr in friend_requests
-        ]
-    }
-    return JsonResponse(data)
