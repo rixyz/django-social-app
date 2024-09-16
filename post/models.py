@@ -1,8 +1,14 @@
+from django.core.exceptions import ValidationError
+import datetime
+import os
+
 from django.db import models
 from user.models import User
 
-import os
-import datetime
+def file_size(value):
+    limit = 5 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError('File too large. Size should not exceed 5 MB.')
 
 def rename_post_image(instance, filename):
     name, ext = os.path.splitext(filename)
@@ -18,7 +24,7 @@ class CreatedAtModel(models.Model):
 class Post(CreatedAtModel):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length=500)
-    image = models.ImageField(upload_to=rename_post_image, null=True, blank=True)
+    image = models.ImageField(upload_to=rename_post_image, validators=[file_size], null=True, blank=True)
 
     def liked_by(self, user):
         return self.likes.filter(user=user).exists()
