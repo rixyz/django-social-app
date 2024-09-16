@@ -4,6 +4,17 @@
 {% block content %}
 <section class="container w-75 m-auto mt-3">
   <div class="card">
+    <div class="card-header">
+      <img
+        src="{{ post.author.profile_picture.url }}"
+        alt="{{post.author.username}}'s profile picture"
+        class="rounded-circle me-2"
+        style="width: 30px; height: 30px"
+      />
+      <a href="{% url 'profile' post.author.username %}" class="text-decoration-none text-dark"> 
+        {{ post.author.username }}
+      </a>
+    </div>
     <div class="card-body">
       {% if post.image %}
       <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image" />

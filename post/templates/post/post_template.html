@@ -26,7 +26,7 @@
     <i class="fa fa-thumbs-up"></i> (<span class="likes-count">{{ post.likes.count }}</span>)
     </button>    
     <a href="{% url 'post-detail' post.id %}" class="btn btn-sm btn-secondary">
-      <i class="fa fa-comment"></i>
+      <i class="fa fa-comment"></i> (<span class="comments-count">{{ post.comments.count }})
     </a>
     <div class="comments-section mt-3">
       {% if post.comments.all %}
