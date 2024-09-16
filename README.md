@@ -32,7 +32,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 pip install -r requirements.txt
 ```
-4. Create a `.env` file
+5. Create a `.env` file
 ```
 SECRET_KEY=
 DB_NAME=
@@ -41,7 +41,7 @@ DB_PASSWORD=
 DB_HOST=
 DB_PORT=
 ```
-5. Run migrations
+6. Run migrations
 ```
 python manage.py migrate
 ```
